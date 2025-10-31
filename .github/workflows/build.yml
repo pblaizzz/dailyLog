@@ -9,12 +9,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check out repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -40,12 +43,17 @@ jobs:
           cat README.md
 
       - name: Commit and push if changed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # 设置分支名称变量
           BRANCH_NAME="${GITHUB_REF#refs/heads/}"
 
           git config user.email "915892243@qq.com"
           git config user.name "pblaizzz-bot"
+          
+          # 配置 git 使用 token 推送
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
 
           # 添加所有变更
           git add -A
