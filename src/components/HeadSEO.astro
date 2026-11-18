@@ -4,12 +4,12 @@ export interface Props {
   content: any;
   pageURL: URL | string;
 }
-const { keywords, author, homePage, title, siteImage, description: siteDescription } = SITE;
+const { keywords, author, homePage, title, description: siteDescription } = SITE;
 const { content = {}, pageURL } = Astro.props;
 const { title: contentTitle, socialImage, description: contentDescription, image } = content;
 
 const pageTitle = contentTitle ? `${contentTitle} · ${title}` : title;
-const imageSrc = new URL(socialImage || image || siteImage, homePage).href;
+const imageSrc = socialImage || image;
 const description = contentDescription || siteDescription;
 const preloadImage = image && /^https:\/\/(cdn\.fliggy\.com|gw\.alipayobjects\.com)\//.test(image)
   ? `${image}?x-oss-process=image/resize,w_3600/format,webp` : image;
@@ -20,7 +20,7 @@ const preloadImage = image && /^https:\/\/(cdn\.fliggy\.com|gw\.alipayobjects\.c
 <meta name='description' content={description} />
 <meta property='og:type' content='website' />
 <meta property='og:title' content={pageTitle} />
-<meta property='og:image' content={imageSrc} />
+{imageSrc && <meta property='og:image' content={new URL(imageSrc, homePage).href} />}
 <meta property='og:description' content={description} />
 <meta property='og:url' content={pageURL} />
 <meta property='og:site_name' content={title} />

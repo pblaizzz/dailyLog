@@ -3,52 +3,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Card from '../components/Card.astro';
 import Header from '../components/Header/Header.astro';
 import { SITE } from '@/config';
-import { sortPosts, toNumericUrl } from '@/util';
+import { sortPosts } from '@/util';
 
 const posts = sortPosts(Object.values(import.meta.glob('./posts/*.md', { eager: true })));
-const latest = posts[0];
 ---
 
 <BaseLayout title={SITE.title} description={SITE.description}>
   <Header />
-  <main class="frame journal">
-    <section class="cover" aria-labelledby="journal-title">
-      <div class="intro">
-        <p class="folio">个人手记 / FIELD NOTES</p>
-        <h1 id="journal-title">{SITE.title}<span aria-hidden="true">.</span></h1>
-        <p class="lede">{SITE.description}</p>
-        {latest && <a class="read" href={latest.frontmatter.numericUrl ?? toNumericUrl(latest.url)}>阅读最新一期 <span aria-hidden="true">↗</span></a>}
-      </div>
-      <figure>
-        <img src="/assets/1.jpg" alt="晚霞映照下，树冠在橙紫色天空中留下剪影" width="1706" height="1279" fetchpriority="high" />
-        <figcaption><span>图记 / 日落时分</span><span>FIELD NOTES — 01</span></figcaption>
-      </figure>
-    </section>
-    <section id="archive" aria-labelledby="archive-title">
-      <div class="section-head"><div><p class="folio">THE ARCHIVE</p><h2 id="archive-title">手记目录</h2></div><span>共 {posts.length} 期</span></div>
-      {posts.length ? <ol>{posts.map((post) => <li><Card post={post} /></li>)}</ol> : <p>第一期正在准备中。</p>}
-    </section>
+  <main id="archive" class="frame journal">
+    <h1 class="sr-only">{SITE.title} · 手记目录</h1>
+    {posts.length ? <ol>{posts.map((post) => <li><Card post={post} /></li>)}</ol> : <p>第一期正在准备中。</p>}
   </main>
 </BaseLayout>
 
 <style>
-  .journal { padding-bottom: clamp(40px, 7vw, 80px); }
-  .cover { display: grid; grid-template-columns: 1fr 1.1fr; align-items: center; gap: clamp(24px, 5vw, 72px); padding-block: clamp(32px, 5vw, 64px); }
-  .intro h1 { margin: 12px 0 20px; color: var(--theme-text); font: 800 clamp(48px, 6.4vw, 86px)/1.16 var(--display); letter-spacing: -.07em; }
-  h1 span { color: var(--theme-accent); }
-  .lede { font-size: clamp(17px, 1.6vw, 22px); }
-  figcaption, .section-head > span { color: var(--muted); font-size: 13px; }
-  .read { display: inline-flex; gap: 28px; background: var(--theme-text); color: var(--theme-bg); margin-top: 26px; padding: 10px 18px; font-size: 15px; }
-  .read:hover { background: var(--theme-accent); }
-  figure { margin: 0; }
-  figure img { display: block; width: 100%; aspect-ratio: 1.95; height: auto; object-fit: cover; object-position: 50% 55%; }
-  figcaption { display: flex; justify-content: space-between; margin-top: 6px; font: 12px/1.6 var(--font-mono); }
-  #archive { scroll-margin-top: 16px; }
-  .section-head { display: flex; align-items: end; justify-content: space-between; padding: 16px 0; border-top: 2px solid var(--theme-text); border-bottom: 1px solid var(--theme-divider); }
-  .section-head h2 { margin: 3px 0 0; font: 700 32px/1.3 var(--display); }
-  ol { list-style: none; padding: 0; }
-  @media (max-width: 680px) {
-    .cover { grid-template-columns: 1fr; gap: 24px; }
-    figure img { aspect-ratio: 2.4; }
-  }
+  .journal { padding-block: 24px 64px; }
+  ol { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 320px)); gap: 24px; list-style: none; padding: 0; }
+  @media (max-width: 600px) { ol { grid-template-columns: minmax(0, 1fr); } }
 </style>

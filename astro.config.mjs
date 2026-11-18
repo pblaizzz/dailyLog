@@ -62,7 +62,6 @@ function defaultLayoutPlugin() {
     }
 
     frontmatter.description = frontmatter.description || SITE.description;
-    frontmatter.image = frontmatter.image || SITE.siteImage;
 
     if (!frontmatter.date) {
       frontmatter.date = getFileCreateDate(filePath);
