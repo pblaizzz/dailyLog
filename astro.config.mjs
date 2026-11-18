@@ -17,8 +17,6 @@ const markdownConfig = {
 };
 
 const DEFAULT_FORMAT = "YYYY/MM/DD";
-const WEEKLY_REPO_NAME = "pblaizzz/dailyLog";
-const START_DATE = "2022-10-10";
 
 function formatDate(date) {
   return dayjs(date).format(DEFAULT_FORMAT);
@@ -26,12 +24,6 @@ function formatDate(date) {
 
 function getFileCreateDate(filePath) {
   return formatDate(fs.statSync(filePath).birthtime);
-}
-
-function getWeeklyDate(num) {
-  return num < 100
-    ? formatDate(dayjs(START_DATE).subtract(100 - num, "week"))
-    : getFileCreateDate(filePath);
 }
 
 function defaultLayoutPlugin() {
@@ -62,7 +54,7 @@ function defaultLayoutPlugin() {
 
     if (tree.children[0]?.value && !frontmatter.image) {
       const imageElement = parse(tree.children[0].value).querySelector("img");
-      frontmatter.image = imageElement.getAttribute("src");
+      frontmatter.image = imageElement?.getAttribute("src");
     }
 
     if (tree.children[1]?.children[1]?.value) {
@@ -70,14 +62,10 @@ function defaultLayoutPlugin() {
     }
 
     frontmatter.description = frontmatter.description || SITE.description;
-    frontmatter.image = frontmatter.image || SITE.image;
+    frontmatter.image = frontmatter.image || SITE.siteImage;
 
     if (!frontmatter.date) {
-      const postNumber = filePath.split(/[\/\\]posts[\/\\]/)[1]?.split("-")[0];
-      frontmatter.date =
-        SITE.repo === WEEKLY_REPO_NAME
-          ? getWeeklyDate(postNumber)
-          : getFileCreateDate(filePath);
+      frontmatter.date = getFileCreateDate(filePath);
     }
   };
 }

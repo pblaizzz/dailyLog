@@ -26,22 +26,24 @@ const { image, description, date } = post.frontmatter;
 <a
   href={link}
   data-astro-prefetch
-  data-image={image}
-  class="pb-3 md:mt-5 mt-4 md:mr-4 flex flex-col justify-center rounded-b-md shadow-md overflow-hidden mx-auto md:w-80 sm:w-96 w-full card-content preload-link"
+  class="entry"
 >
-  <img
-    data-placeholder-background="linear-gradient(to bottom, var(--placeholder-gradient-start), var(--placeholder-gradient-end))"
-    data-src={`${image}?x-oss-process=image/resize,w_640/format,webp`}
-    data-alt={title}
-    class="lozad block md:w-80 md:h-48 sm:w-96 w-full sm:h-52 h-56 rounded-t-md"
-  />
-  <div class="w-full flex justify-between items-center leading-tight pt-3 px-3">
-    <div class="text-gray-800 dark:text-gray-200 font-semibold md:text-base text-lg">{title}</div>
-    <div class="text-grey-darker text-gray-600 dark:text-gray-300 md:text-sm text-base">
-      {date}
-    </div>
+  <div class="thumbnail">{image && <img src={image} alt="" loading="lazy" width="200" height="130" />}</div>
+  <div class="copy">
+    <time class="folio" datetime={date.replaceAll('/', '-')}>{date}</time>
+    <h3>{title}</h3>
+    <p>{description}</p>
   </div>
-  <p class="text-gray-600 dark:text-gray-300 md:w-78 w-94 overflow-hidden pt-2 line-clamp-2 px-3 w-full md:h-12 h-14 md:text-sm text-base">
-    {description}
-  </p>
+  <span class="arrow" aria-hidden="true">↗</span>
 </a>
+
+<style>
+  .entry { display: grid; grid-template-columns: clamp(96px, 17vw, 188px) minmax(0, 1fr) auto; gap: clamp(14px, 3vw, 38px); padding-block: 22px; border-bottom: 1px solid var(--theme-divider); color: var(--theme-text); }
+  .thumbnail { aspect-ratio: 1.65; background: repeating-linear-gradient(135deg, transparent 0 6px, var(--theme-divider) 7px 8px); }
+  .thumbnail img { width: 100%; height: 100%; object-fit: cover; }
+  .copy h3 { margin: 4px 0; font: 700 clamp(21px, 2.3vw, 29px)/1.3 var(--display); }
+  .copy p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 15px; color: var(--muted); }
+  .arrow { font: 24px/1 var(--display); color: var(--theme-accent); }
+  .entry:hover h3 { text-decoration: underline; text-underline-offset: 4px; }
+  @media (max-width: 480px) { .entry { grid-template-columns: 84px minmax(0, 1fr); } .arrow { display: none; } .thumbnail { aspect-ratio: 1; } }
+</style>

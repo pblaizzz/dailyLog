@@ -1,0 +1,41 @@
+name: Update article index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/pages/posts/*.md'
+      - 'src/config.ts'
+      - 'build.js'
+      - '.github/workflows/article-index.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: article-index-main
+  cancel-in-progress: false
+
+jobs:
+  index:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: node build.js
+      - name: Publish changed indexes
+        run: |
+          git add -- README.md RECENT.md public/posts.json
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Update article index'
+            git push origin HEAD:main
+          fi

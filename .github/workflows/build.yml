@@ -1,67 +1,21 @@
-name: Build README
+name: Verify site
 
-on:
-  push:
-  workflow_dispatch:
-  schedule:
-    - cron: "0 0 * * *"
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - name: Check out repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          ref: ${{ github.ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+          persist-credentials: false
+      - uses: actions/setup-node@v4
         with:
-          node-version: "18"
-
-      - uses: actions/cache@v3
-        name: Configure npm caching
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install Node.js dependencies
-        run: npm install
-
-      - name: Update README
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          node build.js
-          cat README.md
-
-      - name: Commit and push if changed
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # 设置分支名称变量
-          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
-
-          git config user.email "915892243@qq.com"
-          git config user.name "pblaizzz-bot"
-          
-          # 配置 git 使用 token 推送
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-
-          # 添加所有变更
-          git add -A
-
-          # 检查是否有变更
-          if git diff-index --quiet HEAD --; then
-            echo "No changes detected"
-          else
-            git commit -m "Updated content"
-            git push origin "HEAD:$BRANCH_NAME"
-          fi
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: test -s dist/index.html && test -s dist/pagefind/pagefind.js

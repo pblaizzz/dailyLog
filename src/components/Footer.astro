@@ -1,5 +1,8 @@
 ---
-import ThemeSwitch from './ThemeSwitch.astro';
+import { SITE } from '@/config';
 ---
 
-<ThemeSwitch />
+<footer class="frame"><span>{SITE.title} · 个人手记</span></footer>
+<style>
+  footer { margin-top: auto; display: flex; justify-content: space-between; border-top: 1px solid var(--theme-divider); padding-block: 18px; font-size: 13px; color: var(--muted); }
+</style>

@@ -3,16 +3,16 @@ import '@pagefind/default-ui/css/ui.css';
 import SearchIcon from './SearchIcon.astro';
 ---
 
-<site-search id='search' class='ms-auto relative md:inline-block hidden site-search'>
-  <button data-open-modal disabled class='flex items-center justify-center rounded-md gap-1 search-icon' title='输入/进行搜索'>
+<site-search id='search' class='site-search'>
+  <button data-open-modal disabled class='search-icon' aria-label='搜索手记' title='搜索手记（/）'>
     <SearchIcon />
   </button>
   <dialog
-    aria-label='search'
+    aria-label='搜索手记'
     class='h-full max-h-full w-full max-w-full shadow backdrop:backdrop-blur sm:mx-auto sm:mb-auto sm:mt-16 sm:h-max sm:max-h-[calc(100%-8rem)] sm:min-h-[15rem] sm:w-5/6 sm:max-w-[48rem] sm:rounded-md opacity-0 text-left'
   >
     <div class='dialog-frame flex flex-col gap-4 p-6 pt-12 sm:pt-6'>
-      <button data-close-modal class='ms-auto cursor-pointer rounded-full px-4 py-2 close-icon'>X</button>
+      <button data-close-modal class='ms-auto cursor-pointer rounded-full px-4 py-2 close-icon'>关闭</button>
       {
         import.meta.env.DEV ? (
           <div class='mx-auto text-center'>
@@ -65,9 +65,11 @@ import SearchIcon from './SearchIcon.astro';
 
         const closeModal = () => {
           dialog.close();
+        };
+        dialog.addEventListener('close', () => {
           document.body.classList.remove('overflow-hidden');
           window.removeEventListener('click', onWindowClick);
-        };
+        });
 
         openBtn.addEventListener('click', openModal);
         openBtn.disabled = false;
@@ -76,7 +78,7 @@ import SearchIcon from './SearchIcon.astro';
 
         window.addEventListener('keydown', (e) => {
           if (e.key === '/' && !dialog.open) {
-            openModal(event);
+            openModal(e);
             e.preventDefault();
           }
         });
@@ -92,7 +94,7 @@ import SearchIcon from './SearchIcon.astro';
               bundlePath: import.meta.env.BASE_URL.replace(/\/$/, '') + '/pagefind/',
               showImages: false,
               translations: {
-                placeholder: '搜索潮流内容',
+                placeholder: '搜索手记',
                 zero_results: '没有找到 [SEARCH_TERM]',
                 many_results: '[COUNT] 条搜索命中 [SEARCH_TERM]',
                 clear_search: '清除',
@@ -125,15 +127,12 @@ import SearchIcon from './SearchIcon.astro';
   }
 
   .search-icon {
-    position: absolute;
-    left: -40px;
-    top: -23px;
-    outline: none;
-  }
-
-  .content-title .search-icon {
-    top: -16px;
-    left: -36px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    color: var(--theme-text);
   }
 
   .site-search .pagefind-ui__message {

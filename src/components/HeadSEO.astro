@@ -4,14 +4,15 @@ export interface Props {
   content: any;
   pageURL: URL | string;
 }
-const { icon, keywords, author, homePage, title, siteImage, description: siteDescription } = SITE;
+const { keywords, author, homePage, title, siteImage, description: siteDescription } = SITE;
 const { content = {}, pageURL } = Astro.props;
 const { title: contentTitle, socialImage, description: contentDescription, image } = content;
 
-const pageTitle = contentTitle ? `${title}${contentTitle}` : title;
-const imageSrc = socialImage || siteImage;
+const pageTitle = contentTitle ? `${contentTitle} · ${title}` : title;
+const imageSrc = new URL(socialImage || image || siteImage, homePage).href;
 const description = contentDescription || siteDescription;
-const preloadImage = image ? `${image}?x-oss-process=image/resize,w_3600/format,webp` : false;
+const preloadImage = image && /^https:\/\/(cdn\.fliggy\.com|gw\.alipayobjects\.com)\//.test(image)
+  ? `${image}?x-oss-process=image/resize,w_3600/format,webp` : image;
 ---
 
 <meta name='keywords' content={keywords} />
@@ -19,9 +20,9 @@ const preloadImage = image ? `${image}?x-oss-process=image/resize,w_3600/format,
 <meta name='description' content={description} />
 <meta property='og:type' content='website' />
 <meta property='og:title' content={pageTitle} />
-<meta property='og:image' content={icon} />
+<meta property='og:image' content={imageSrc} />
 <meta property='og:description' content={description} />
 <meta property='og:url' content={pageURL} />
-<meta property='og:site_name' content={pageTitle} />
+<meta property='og:site_name' content={title} />
 
 {preloadImage && <link rel='preload' href={preloadImage} as='image' />}

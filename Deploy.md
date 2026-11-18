@@ -4,7 +4,7 @@
 
 1. Fork 本仓库到自己的 Github 仓库
 2. Clone 代码到本地，并确保已安装 node / npm 环境
-3. 执行 `npm i` 安装依赖模块，然后执行 `npm run dev` 确认项目是否能运行
+3. 使用 Node.js 24（安装了 nvm 时可执行 `nvm install && nvm use`），执行 `npm ci`，然后用 `npm run dev` 本地预览，或用 `npm run build` 验证生产构建。请将 `package-lock.json` 随依赖变更一起提交。
 
 ### 二、文档格式说明
 
@@ -23,7 +23,13 @@
 5. **评论系统使用的是我的 key，若需自用，请参考 [giscus](https://giscus.app/zh-CN) 自行配置**
 6. 请务必将 `config.ts` 中的信息配置为你自己的信息，特别是 repo，防止出现不可预料的错误
 
+### GitHub 与 Vercel 的分工
+
+- Vercel 连接此仓库，生产分支选 `main`，根目录选仓库根目录。构建使用 Node.js 24、`npm ci`、`npm run build`，发布 `dist`。构建会先生成文章 JSON，再生成静态页面和 Pagefind 搜索索引，不需要等 Actions 回写，也不需要在 Actions 配置 Vercel Token。
+- GitHub Actions 的 `Verify site` 在推送或 PR 时独立验证构建。`Update article index` 在 `main` 的文章或生成配置变更时按 Git 历史更新 README、近期文章及 JSON，仅在结果变化时回写；如禁止机器人直推 `main`，目录回写会失败，但不影响 Vercel 自行构建。
+- 新文章使用不重复的 `数字-标题.md` 文件名。建议显式填写 `date: YYYY/MM/DD`，否则文件创建时间可能随重新检出而变化。文章提交后可手动运行 `Update article index` 重建目录。
+
 ### 最后
 
 1. 若你不是程序员，遇到不懂的名词，请谷歌解决，这个过程很有趣，若仍有问题，可直接问程序员，或提交 issue 问我
-2. 期待你玩得开心，欢迎给我提建议，或推荐「潮流周刊」给你的朋友
+2. 期待你玩得开心，欢迎给我提建议，或推荐 dailyLog 给你的朋友

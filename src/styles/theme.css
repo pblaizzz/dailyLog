@@ -9,10 +9,13 @@
 
 :root {
   color-scheme: light;
-  --theme-bg: #fff;
-  --theme-accent: #a67c52;
-  --theme-text: #262626;
-  --theme-divider: #e6e6e6;
+  --theme-bg: #f8f6ee;
+  --theme-accent: #a23a26;
+  --theme-text: #282a25;
+  --theme-divider: #c9c7ba;
+  --muted: #605e52;
+  --display: Georgia, 'Songti SC', 'Noto Serif CJK SC', SimSun, serif;
+  --font-body: system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;
   --placeholder-gradient-start: #ece9e6;
   --placeholder-gradient-end: #ffffff;
   --pagefind-ui-text: #393939;
@@ -27,6 +30,7 @@
   --theme-text: #e7e9ea;
   --theme-divider: #555;
   --theme-bg: #21262b;
+  --muted: #c2beb1;
   --placeholder-gradient-start: #2c3e50;
   --placeholder-gradient-end: #34495e;
   --pagefind-ui-text: #e7e9ea;
@@ -40,6 +44,10 @@ body {
   color: var(--theme-text);
   letter-spacing: 0.5px;
 }
+
+.frame { width: min(1120px, calc(100% - clamp(32px, 8vw, 112px))); margin-inline: auto; }
+.folio { color: var(--theme-accent); font: 600 12px/1.5 var(--font-mono); letter-spacing: .11em; }
+:focus-visible { outline: 2px solid var(--theme-accent); outline-offset: 3px; }
 
 .dark .shadow-md {
   box-shadow:
